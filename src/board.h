@@ -9,7 +9,7 @@ struct Board {
     Board();
 
     void SetCell(Point pos, Color c);
-    void DrawCell(Point pos) const;
+    void DrawCell(Point pos, Texture2D texture) const;
     void Draw() const;
 
 private:
@@ -23,6 +23,8 @@ private:
     };
 
     std::vector<Cell> cells;
+    
+    Texture2D state0;
 
     Color GetColor(Point pos) const;
 };

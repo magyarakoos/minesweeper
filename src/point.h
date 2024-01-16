@@ -1,19 +1,11 @@
 #pragma once
 
 struct Point {
-private:
     int x;
     int y;
 
-public:
-    Point() = default;
-    Point(int _x, int _y) : x(_x), y(_y) {}
-
-    int GetX() const { return x; }
-    int GetY() const { return y; }
-
-    void SetX(int _x) { x = _x; }
-    void SetY(int _y) { y = _y; }
+    Point() : x(0), y(0) {}
+    constexpr Point(int _x, int _y) : x(_x), y(_y) {}
 
     #pragma region Point + Point operators
     bool operator==(Point p) const {

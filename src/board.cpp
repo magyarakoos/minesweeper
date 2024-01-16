@@ -1,6 +1,6 @@
-#include <iostream>
 #include "board.h"
 #include "settings.h"
+#include "graphics.h"
 
 Board::Cell::Cell()
     :
@@ -21,42 +21,38 @@ Board::Board() {
     assert(CELL_SIZE > 0);
 
     cells.resize(CELL_WIDTH * CELL_HEIGHT);
+
+    state0 = LoadTexture(STATE_0.c_str());
 }
 
 void Board::SetCell(Point pos, Color c) {
 
-    assert(pos.GetX() >= 0 && pos.GetY() >= 0);
-    assert(pos.GetX() < CELL_WIDTH && pos.GetY() < CELL_HEIGHT);
+    assert(pos.x >= 0 && pos.y >= 0);
+    assert(pos.x < CELL_WIDTH && pos.y < CELL_HEIGHT);
 
-    int index = CELL_WIDTH * pos.GetY() + pos.GetX();
+    int index = CELL_WIDTH * pos.y + pos.x;
 
     cells[index].SetColor(c);
 }
 
 Color Board::GetColor(Point pos) const {
 
-    assert(pos.GetX() >= 0 && pos.GetY() >= 0);
-    assert(pos.GetX() < CELL_WIDTH && pos.GetY() < CELL_HEIGHT);
+    assert(pos.x >= 0 && pos.y >= 0);
+    assert(pos.x < CELL_WIDTH && pos.y < CELL_HEIGHT);
 
-    int index = CELL_WIDTH * pos.GetY() + pos.GetX();
+    int index = CELL_WIDTH * pos.y + pos.x;
 
     return cells[index].color;
 }
 
-void Board::DrawCell(Point pos) const {
+void Board::DrawCell(Point pos, Texture2D texture) const {
 
     Point cellPos = pos;
 
     cellPos *= CELL_SIZE;
     cellPos += SCREEN_POS;
 
-    DrawRectangle(
-        cellPos.GetX(),
-        cellPos.GetY(),
-        CELL_SIZE - PADDING,
-        CELL_SIZE - PADDING,
-        GetColor(pos)
-    );
+    DrawSprite(texture, cellPos, 1);
 }
 
 void Board::Draw() const {

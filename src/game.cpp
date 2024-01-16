@@ -1,8 +1,10 @@
 #include <raylib.h>
 #include <assert.h>
+#include <iostream>
 #include "settings.h"
 #include "random.h"
 #include "game.h"
+#include "board.h"
 
 Game::Game() {
     for (int i = 0; i < CELL_HEIGHT; i++) {
@@ -47,5 +49,19 @@ void Game::Draw() {
 }
 
 void Game::Update() {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 
+        Point cellPos {
+            (GetMouseX() - SCREEN_POS.x) / CELL_SIZE,
+            (GetMouseY() - SCREEN_POS.y) / CELL_SIZE 
+        };
+
+        Board::Cell& currCell = board.GetCell(cellPos);
+
+        std::cout << cellPos.x << ' ' << cellPos.y << '\n';
+        
+        if (currCell.state != 0) return;
+
+        
+    }
 }

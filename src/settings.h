@@ -14,6 +14,8 @@ inline constexpr Point SCREEN_POS {
     (HEIGHT - (CELL_HEIGHT * CELL_SIZE)) / 2
 };
 
+constexpr Point DIRS[] = {{-1, -1}, {1, 1}, {0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, -1}, {-1, 1}};
+
 const std::string TITLE = "Minesweeper";
 
 const std::string STATE_0 = "assets/state0.png";

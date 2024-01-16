@@ -92,16 +92,11 @@ void Board::OpenCell(Point pos) {
 
     if (currCell.state != 0) return;
 
-    currCell.state = 1;
+    currCell.state = 10;
 
-    OpenCell(pos - 1);
-    OpenCell(pos + 1);
-    OpenCell({pos.x, pos.y + 1});
-    OpenCell({pos.x, pos.y - 1});
-    OpenCell({pos.x + 1, pos.y});
-    OpenCell({pos.x - 1, pos.y});
-    OpenCell({pos.x + 1, pos.y - 1});
-    OpenCell({pos.x - 1, pos.y + 1});
+    for (Point dir : DIRS) {
+        OpenCell(pos + dir);
+    }
 }
 
 void Board::Draw() const {

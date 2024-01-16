@@ -3,19 +3,20 @@
 #include <raylib.h>
 #include <assert.h>
 #include <vector>
+#include "point.h"
 
 struct Board {
-    Board(int x, int y, int width, int height, int cellSize);
+    Board(Point pos, int width, int height, int cellSize, int padding);
 
-    void SetCell(int x, int y, Color c);
-    void DrawCell(int x, int y) const;
+    void SetCell(Point pos, Color c);
+    void DrawCell(Point pos) const;
     void Draw() const;
 
 private:
     struct Cell {
         Cell();
         void SetColor(Color color);
-        void Remove();
+        void Remove() noexcept;
 
         bool exists;
         Color color;
@@ -26,9 +27,9 @@ private:
     const int WIDTH;
     const int HEIGHT;
     const int CELL_SIZE;
+    const int PADDING;
 
-    int screenX;
-    int screenY;
+    Point screenPos;
 
-    Color GetColor(int x, int y) const;
+    Color GetColor(Point pos) const;
 };

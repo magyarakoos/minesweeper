@@ -1,9 +1,10 @@
 #pragma once
 
 #include <string>
+#include "board.h"
 
 struct Game {
-    Game(int WIDTH, int HEIGHT, int FPS, char* title);
+    Game(Point screenPos, int cellsCount, int cellSize, int padding, int WIDTH, int HEIGHT, int FPS, std::string title);
     
     Game(const Game& g) = delete;
 
@@ -17,4 +18,6 @@ struct Game {
 private:
     void Draw();
     void Update();
+
+    Board board;
 };

@@ -1,3 +1,4 @@
+#include <iostream>
 #include "board.h"
 
 Board::Cell::Cell()
@@ -14,13 +15,13 @@ void Board::Cell::Remove() noexcept {
     exists = 0;
 }
 
-Board::Board(int x, int y, int width, int height, int cellSize)
+Board::Board(Point pos, int width, int height, int cellSize, int padding)
     :
-        screenX(x),
-        screenY(y),
+        screenPos(pos),
         WIDTH(width),
         HEIGHT(height),
-        CELL_SIZE(cellSize)
+        CELL_SIZE(cellSize),
+        PADDING(padding)
     {
         assert(width > 0 && height > 0);
         assert(cellSize > 0);
@@ -28,43 +29,43 @@ Board::Board(int x, int y, int width, int height, int cellSize)
         cells.resize(WIDTH * HEIGHT);
     }
 
-void Board::SetCell(int x, int y, Color c) {
-    
-    assert(x >= 0 && y >= 0);
-    assert(x < WIDTH && y < HEIGHT);
+void Board::SetCell(Point pos, Color c) {
 
-    int index = WIDTH * y + x;
+    assert(pos.GetX() >= 0 && pos.GetY() >= 0);
+    assert(pos.GetX() < WIDTH && pos.GetY() < HEIGHT);
+
+    int index = WIDTH * pos.GetY() + pos.GetX();
 
     cells[index].SetColor(c);
 }
 
-Color Board::GetColor(int x, int y) const {
-    
-    assert(x >= 0 && y >= 0);
-    assert(x < WIDTH && y < HEIGHT);
+Color Board::GetColor(Point pos) const {
 
-    int index = WIDTH * y + x;
+    assert(pos.GetX() >= 0 && pos.GetY() >= 0);
+    assert(pos.GetX() < WIDTH && pos.GetY() < HEIGHT);
+
+    int index = WIDTH * pos.GetY() + pos.GetX();
 
     return cells[index].color;
 }
 
-void Board::DrawCell(int x, int y) const {
+void Board::DrawCell(Point pos) const {
 
     DrawRectangle(
-        screenX + x * CELL_SIZE, 
-        screenY + y * CELL_SIZE, 
-        CELL_SIZE, 
-        CELL_SIZE, 
-        GetColor(x, y)
+        pos.GetX() * CELL_SIZE + PADDING,
+        pos.GetY() * CELL_SIZE + PADDING,
+        CELL_SIZE - PADDING,
+        CELL_SIZE - PADDING,
+        GetColor(pos)
     );
 }
 
 void Board::Draw() const {
-    
+
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
 
-            DrawCell(i, j);
+            DrawCell({j, i});
         }
     }
 }

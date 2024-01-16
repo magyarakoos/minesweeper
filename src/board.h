@@ -16,21 +16,23 @@ struct Board {
     struct Cell {
         Cell();
         void SetColor(Color color);
-        void Remove() noexcept;
 
         int state;
-        bool exists;
+        bool isBomb;
         Color color;
     };
 
     Cell& GetCell(Point pos);
 
     void OpenCell(Point pos);
+    void SetBombs(Point start);
+    int BombsArount(Point pos);
+    
+    int unlockCount;
 private:
 
     std::vector<Cell> cells;
     
-    int unlockCount;
 
     std::array<Texture2D, 11> textures;
 

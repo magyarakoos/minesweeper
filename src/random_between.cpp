@@ -1,8 +1,7 @@
-#pragma once
-
 #include <random>
+#include "random_between.h"
 
-int random(int min, int max) {
+int random_between(int min, int max) {
 
     std::random_device rd;
     std::mt19937 engine(rd());

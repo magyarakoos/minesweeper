@@ -1,3 +1,10 @@
+#include <unistd.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <math.h>
+#include "random_between.h"
+#include "point.h"
 #include "board.h"
 #include "settings.h"
 #include "graphics.h"
@@ -5,18 +12,12 @@
 Board::Cell::Cell()
     :
     state(0),
-    exists(0),
+    isBomb(0),
     color(WHITE) {}
 
 void Board::Cell::SetColor(Color c) {
     color = c;
-    exists = 1;
 }
-
-void Board::Cell::Remove() noexcept {
-    exists = 0;
-}
-
 
 Board::Board() {
     assert(CELL_WIDTH > 0 && CELL_HEIGHT > 0);
@@ -39,7 +40,6 @@ Board::Board() {
         LoadTexture(STATE_9.c_str()),
         LoadTexture(STATE_10.c_str())
     };
-
 }
 
 Board::Cell& Board::GetCell(Point pos) {
@@ -87,15 +87,77 @@ void Board::DrawCell(Point pos) const {
     DrawSprite(textures[cells[index].state], cellPos, 1);
 }
 
+void Board::SetBombs(Point start) {
+
+    int bombCount = std::max(CELL_WIDTH, CELL_HEIGHT);
+    std::vector<Point> bombPos;
+
+    while (bombPos.size() != bombCount) {
+            
+        Point p {
+            random_between(0, CELL_WIDTH - 1),
+            random_between(0, CELL_HEIGHT - 1)
+        };
+
+        if (p != start && 
+            std::find(bombPos.begin(), bombPos.end(), p) == bombPos.end()
+            ) {
+
+            bombPos.push_back(p);
+        }
+    }
+
+    for (Point p : bombPos) {
+        Board::Cell& currCell = GetCell(p);
+
+        currCell.isBomb = 1;
+    }
+}
+
+int Board::BombsArount(Point pos) {
+    
+    if (GetCell(pos).isBomb) {
+        return -1;
+    }
+
+    int result = 0;
+
+    for (Point dir : DIRS) {
+        
+        Point p = pos + dir;
+
+        result += (
+            p.x >= 0 && p.y >= 0 && 
+            p.x < CELL_WIDTH && p.y < CELL_HEIGHT &&
+            GetCell(p).isBomb
+        );
+    }
+
+    return result;
+}
+
 void Board::OpenCell(Point pos) {
     Board::Cell& currCell = GetCell(pos);
 
     if (currCell.state != 0) return;
 
-    currCell.state = 10;
+    int bombs = BombsArount(pos);
+
+    currCell.state = (
+        bombs == -1 ? 9 : 
+        bombs ==  0 ? 10 :
+        bombs
+    );
+
+    if (currCell.state != 10) return;
 
     for (Point dir : DIRS) {
-        OpenCell(pos + dir);
+        Point newPos = pos + dir;
+
+        if (newPos.x >= 0 && newPos.y >= 0 && newPos.x < CELL_WIDTH && newPos.y < CELL_HEIGHT) {
+        
+            OpenCell(pos + dir);
+        }
     }
 }
 

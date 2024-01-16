@@ -1,8 +1,9 @@
 #include <raylib.h>
 #include <assert.h>
+#include <unistd.h>
 #include <iostream>
 #include "settings.h"
-#include "random.h"
+#include "random_between.h"
 #include "game.h"
 #include "board.h"
 
@@ -10,7 +11,7 @@ Game::Game() {
     for (int i = 0; i < CELL_HEIGHT; i++) {
         for (int j = 0; j < CELL_WIDTH; j++) {
 
-            unsigned char randomGray = random(0, 255);
+            unsigned char randomGray = random_between(0, 255);
 
             Color randomColor {
                 randomGray,
@@ -56,12 +57,18 @@ void Game::Update() {
             (GetMouseY() - SCREEN_POS.y) / CELL_SIZE 
         };
 
+        if (board.unlockCount == 0) {
+
+            board.SetBombs(cellPos);
+        }
+
         Board::Cell& currCell = board.GetCell(cellPos);
 
-        std::cout << cellPos.x << ' ' << cellPos.y << '\n';
-        
-        if (currCell.state != 0) return;
+        if (currCell.isBomb) {
+            currCell.state = 9;
+            return;
+        }
 
-        
+        board.OpenCell(cellPos);
     }
 }

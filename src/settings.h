@@ -9,11 +9,11 @@ constexpr int CELL_WIDTH = 25;
 constexpr int PADDING = 0;
 constexpr int FPS = 60;
 
-const Point SCREEN_POS {
+constexpr Point SCREEN_POS {
     (WIDTH - (CELL_WIDTH * CELL_SIZE)) / 2,
     (HEIGHT - (CELL_HEIGHT * CELL_SIZE)) / 2
 };
 
 const std::string TITLE = "Minesweeper";
 
-const std::string STATE_0 = "state0.png";
+const std::string STATE_0 = "assets/empty.png";

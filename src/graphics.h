@@ -8,5 +8,5 @@ inline void DrawRect(Point pos, Point size, Color color) {
 
 inline void DrawSprite(Texture2D texture, Point pos, float size) {
 
-    DrawTextureEx(texture, {(float)pos.x, (float)pos.y}, 0, size, {0, 0, 0, 0});
+    DrawTextureEx(texture, {(float)pos.x, (float)pos.y}, 0, size, WHITE);
 }

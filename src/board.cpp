@@ -51,7 +51,13 @@ void Board::DrawCell(Point pos, Texture2D texture) const {
 
     cellPos *= CELL_SIZE;
     cellPos += SCREEN_POS;
+/*
+    Point size;
 
+    size += CELL_SIZE;
+
+    DrawRect(cellPos, size, GetColor(pos));
+*/
     DrawSprite(texture, cellPos, 1);
 }
 
@@ -60,7 +66,7 @@ void Board::Draw() const {
     for (int i = 0; i < CELL_HEIGHT; i++) {
         for (int j = 0; j < CELL_WIDTH; j++) {
 
-            DrawCell({j, i});
+            DrawCell({j, i}, state0);
         }
     }
 }

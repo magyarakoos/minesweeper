@@ -5,27 +5,22 @@
 #include "game.h"
 
 Game::Game() {
-        assert(!GetWindowHandle());
+    for (int i = 0; i < CELL_HEIGHT; i++) {
+        for (int j = 0; j < CELL_WIDTH; j++) {
 
-        SetTargetFPS(FPS);
-        InitWindow(WIDTH, HEIGHT, TITLE.c_str());
+            unsigned char randomGray = random(0, 255);
 
-        for (int i = 0; i < CELL_HEIGHT; i++) {
-            for (int j = 0; j < CELL_WIDTH; j++) {
+            Color randomColor {
+                randomGray,
+                randomGray,
+                randomGray,
+                255
+            };
 
-                unsigned char randomGray = random(0, 255);
-
-                Color randomColor {
-                    randomGray,
-                    randomGray,
-                    randomGray,
-                    255
-                };
-
-                board.SetCell({j, i}, randomColor);
-            }
+            board.SetCell({j, i}, randomColor);
         }
     }
+}
 
 Game::~Game() {
     assert(GetWindowHandle());

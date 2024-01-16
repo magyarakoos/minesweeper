@@ -6,7 +6,7 @@
 #include "point.h"
 
 struct Board {
-    Board(Point pos, int width, int height, int cellSize, int padding);
+    Board();
 
     void SetCell(Point pos, Color c);
     void DrawCell(Point pos) const;
@@ -23,13 +23,6 @@ private:
     };
 
     std::vector<Cell> cells;
-
-    const int WIDTH;
-    const int HEIGHT;
-    const int CELL_SIZE;
-    const int PADDING;
-
-    Point screenPos;
 
     Color GetColor(Point pos) const;
 };

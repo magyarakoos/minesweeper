@@ -1,5 +1,6 @@
 #include <iostream>
 #include "board.h"
+#include "settings.h"
 
 Board::Cell::Cell()
     :
@@ -15,26 +16,19 @@ void Board::Cell::Remove() noexcept {
     exists = 0;
 }
 
-Board::Board(Point pos, int width, int height, int cellSize, int padding)
-    :
-        screenPos(pos),
-        WIDTH(width),
-        HEIGHT(height),
-        CELL_SIZE(cellSize),
-        PADDING(padding)
-    {
-        assert(width > 0 && height > 0);
-        assert(cellSize > 0);
+Board::Board() {
+    assert(CELL_WIDTH > 0 && CELL_HEIGHT > 0);
+    assert(CELL_SIZE > 0);
 
-        cells.resize(WIDTH * HEIGHT);
-    }
+    cells.resize(CELL_WIDTH * CELL_HEIGHT);
+}
 
 void Board::SetCell(Point pos, Color c) {
 
     assert(pos.GetX() >= 0 && pos.GetY() >= 0);
-    assert(pos.GetX() < WIDTH && pos.GetY() < HEIGHT);
+    assert(pos.GetX() < CELL_WIDTH && pos.GetY() < CELL_HEIGHT);
 
-    int index = WIDTH * pos.GetY() + pos.GetX();
+    int index = CELL_WIDTH * pos.GetY() + pos.GetX();
 
     cells[index].SetColor(c);
 }
@@ -42,18 +36,23 @@ void Board::SetCell(Point pos, Color c) {
 Color Board::GetColor(Point pos) const {
 
     assert(pos.GetX() >= 0 && pos.GetY() >= 0);
-    assert(pos.GetX() < WIDTH && pos.GetY() < HEIGHT);
+    assert(pos.GetX() < CELL_WIDTH && pos.GetY() < CELL_HEIGHT);
 
-    int index = WIDTH * pos.GetY() + pos.GetX();
+    int index = CELL_WIDTH * pos.GetY() + pos.GetX();
 
     return cells[index].color;
 }
 
 void Board::DrawCell(Point pos) const {
 
+    Point cellPos = pos;
+
+    cellPos *= CELL_SIZE;
+    cellPos += SCREEN_POS;
+
     DrawRectangle(
-        pos.GetX() * CELL_SIZE + PADDING,
-        pos.GetY() * CELL_SIZE + PADDING,
+        cellPos.GetX(),
+        cellPos.GetY(),
         CELL_SIZE - PADDING,
         CELL_SIZE - PADDING,
         GetColor(pos)
@@ -62,8 +61,8 @@ void Board::DrawCell(Point pos) const {
 
 void Board::Draw() const {
 
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
+    for (int i = 0; i < CELL_HEIGHT; i++) {
+        for (int j = 0; j < CELL_WIDTH; j++) {
 
             DrawCell({j, i});
         }

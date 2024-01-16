@@ -1,20 +1,17 @@
 #include <raylib.h>
 #include <assert.h>
+#include "settings.h"
 #include "random.h"
 #include "game.h"
 
-Game::Game(Point screenPos, int cellsCount, int cellSize, int padding, int WIDTH, int HEIGHT, int FPS, std::string title)
-    :
-        board(screenPos, cellsCount, cellsCount, cellSize, padding)
-    {
-
+Game::Game() {
         assert(!GetWindowHandle());
 
         SetTargetFPS(FPS);
-        InitWindow(WIDTH, HEIGHT, title.c_str());
+        InitWindow(WIDTH, HEIGHT, TITLE.c_str());
 
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
+        for (int i = 0; i < CELL_HEIGHT; i++) {
+            for (int j = 0; j < CELL_WIDTH; j++) {
 
                 unsigned char randomGray = random(0, 255);
 
@@ -49,7 +46,7 @@ void Game::Tick() {
 }
 
 void Game::Draw() {
-    ClearBackground(BLACK);
+    ClearBackground(RAYWHITE);
 
     board.Draw();
 }

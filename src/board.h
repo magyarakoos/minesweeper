@@ -29,16 +29,15 @@ struct Board {
     void ZeroSpread(Point pos);
     int OpenCell(Point pos);
     void SetBombs(Point start);
-    void ToggleFlag(Point pos);
+    int ToggleFlag(Point pos);
     int FlagBasedAutoOpen(Point pos);
 
     bool gameStarted;
+
+    std::vector<Cell> cells;
 private:
     int BombsAround(Point pos) const;
     int FlagsAround(Point pos) const;
-
-    std::vector<Cell> cells;
-    
 
     std::array<Texture2D, 12> textures;
 

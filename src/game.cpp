@@ -10,7 +10,25 @@
 #include "game.h"
 #include "board.h"
 
-Game::Game() : gameOver(0), frameCounter(0) {}
+Game::Game() 
+    : 
+        gameOver(0), 
+        frameCounter(0),
+        bombUserCount(BOMB_COUNT)
+    {
+        numbers = {
+            LoadTexture(NUM_0.c_str()),
+            LoadTexture(NUM_1.c_str()),
+            LoadTexture(NUM_2.c_str()),
+            LoadTexture(NUM_3.c_str()),
+            LoadTexture(NUM_4.c_str()),
+            LoadTexture(NUM_5.c_str()),
+            LoadTexture(NUM_6.c_str()),
+            LoadTexture(NUM_7.c_str()),
+            LoadTexture(NUM_8.c_str()),
+            LoadTexture(NUM_9.c_str()),
+        };
+    }
 
 Game::~Game() {
     assert(GetWindowHandle());
@@ -54,38 +72,13 @@ void Game::Reload() {
 }
 
 void Game::Draw() {
-    ClearBackground(Color{156, 156, 156, 255});
+    ClearBackground(RAYWHITE);
 
-    int text_size = 100;
-    
-    DrawRect({SCREEN_POS.x, SCREEN_POS.x}, {WIDTH - 2 * SCREEN_POS.x, text_size / 10 * 9}, BLACK);
+    std::array<int, 3> bombs;
 
-    unsigned sec = frameCounter / FPS;
 
-    if (sec >= 1000) {
-        GameOver();
-    }
-    
-    std::string secStr;
 
-    for (int i = 2; i >= 0; i--) {
-        secStr += (char)(sec % 10) + '0';
-        sec /= 10;
-    }
-
-    std::reverse(secStr.begin(), secStr.end());
-
-    DrawTextEx(
-        Font{FONT_DEFAULT}, 
-        secStr.c_str(), 
-        {
-            (float)(SCREEN_POS.x + text_size / 10), 
-            (float)(SCREEN_POS.x)
-        }, 
-        text_size, 
-        text_size / 10,
-        RED
-    );
+    DrawClock({numbers[0], numbers[7], numbers[9]}, {SCREEN_POS.x, SCREEN_POS.x}, NUMS_SIZE);
 
     board.Draw();
 }
@@ -141,6 +134,17 @@ void Game::Update() {
             }
         }
 
-        board.ToggleFlag(cellPos);
+        bombUserCount += board.ToggleFlag(cellPos);
+
+        if (bombUserCount == (unsigned)-1) {
+            bombUserCount = 0;
+        }
+
+        if (std::all_of(board.cells.begin(), board.cells.end(), 
+            [](Board::Cell cell){ return cell.state != 0; })
+            ) {
+            
+            GameOver();
+        }
     }
 }

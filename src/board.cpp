@@ -211,15 +211,21 @@ void Board::ZeroSpread(Point pos) {
     }
 }
 
-void Board::ToggleFlag(Point pos) {
+int Board::ToggleFlag(Point pos) {
 
     Board::Cell& currCell = GetCell(pos);
 
-    currCell.state = (
-        currCell.state ==  0 ? 11 :
-        currCell.state == 11 ?  0 :
-        currCell.state
-    );
+    if (currCell.state == 0) {
+        currCell.state = 11;
+        return 1;
+    }
+
+    if (currCell.state == 11) {
+        currCell.state = 0;
+        return -1;
+    }
+
+    return 0;
 }
 
 int Board::FlagBasedAutoOpen(Point pos) {

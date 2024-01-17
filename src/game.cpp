@@ -64,7 +64,7 @@ void Game::GameOver(bool won) {
             Board::Cell& currCell = board.GetCell({j, i});
 
             if (currCell.isBomb) {
-                currCell.state = 9;
+                currCell.state = (won ? 11 : 9);
             }
         }
     }

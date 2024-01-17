@@ -3,9 +3,9 @@
 
 inline constexpr int WIDTH = 800;
 inline constexpr int HEIGHT = 768;
-inline constexpr int CELL_SIZE = 64;
-inline constexpr int CELL_HEIGHT = 10;
-inline constexpr int CELL_WIDTH = 12;
+inline constexpr int CELL_SIZE = 16;
+inline constexpr int CELL_HEIGHT = 40;
+inline constexpr int CELL_WIDTH = 48;
 inline constexpr int PADDING = 0;
 inline constexpr int FPS = 60;
 inline constexpr int BOMB_COUNT = CELL_HEIGHT * CELL_WIDTH / 6;

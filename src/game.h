@@ -14,9 +14,12 @@ struct Game {
 
     bool TriggerClose() const;
     void Tick();
-    void GameOver();
+    void GameOver(bool won);
 
-    bool gameOver;
+    // 0: game currently going
+    // 1: game over (lost)
+    // 2: game over (won)
+    int gameOver;
     unsigned frameCounter;
     unsigned bombUserCount;
 private:
@@ -27,4 +30,5 @@ private:
     Board board;
 
     std::array<Texture2D, 10> numbers;
+    std::array<Texture2D, 3> guys;
 };

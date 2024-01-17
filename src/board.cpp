@@ -217,12 +217,12 @@ int Board::ToggleFlag(Point pos) {
 
     if (currCell.state == 0) {
         currCell.state = 11;
-        return 1;
+        return -1;
     }
 
     if (currCell.state == 11) {
         currCell.state = 0;
-        return -1;
+        return 1;
     }
 
     return 0;

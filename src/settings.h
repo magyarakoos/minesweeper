@@ -3,9 +3,9 @@
 
 inline constexpr int WIDTH = 800;
 inline constexpr int HEIGHT = 768;
-inline constexpr int CELL_SIZE = 32;
-inline constexpr int CELL_HEIGHT = 20;
-inline constexpr int CELL_WIDTH = 24;
+inline constexpr int CELL_SIZE = 64;
+inline constexpr int CELL_HEIGHT = 10;
+inline constexpr int CELL_WIDTH = 12;
 inline constexpr int PADDING = 0;
 inline constexpr int FPS = 60;
 inline constexpr int BOMB_COUNT = CELL_HEIGHT * CELL_WIDTH / 6;
@@ -43,3 +43,7 @@ inline const std::string NUM_6 = "assets/number/6.png";
 inline const std::string NUM_7 = "assets/number/7.png";
 inline const std::string NUM_8 = "assets/number/8.png";
 inline const std::string NUM_9 = "assets/number/9.png";
+
+inline const std::string GUY_0 = "assets/guy/0.png";
+inline const std::string GUY_1 = "assets/guy/1.png";
+inline const std::string GUY_2 = "assets/guy/2.png";

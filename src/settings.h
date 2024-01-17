@@ -2,17 +2,17 @@
 #include "point.h"
 
 inline constexpr int WIDTH = 800;
-inline constexpr int HEIGHT = 800;
-inline constexpr int CELL_SIZE = 32;
-inline constexpr int CELL_HEIGHT = 20;
-inline constexpr int CELL_WIDTH = 24;
+inline constexpr int HEIGHT = 768;
+inline constexpr int CELL_SIZE = 128;
+inline constexpr int CELL_HEIGHT = 5;
+inline constexpr int CELL_WIDTH = 6;
 inline constexpr int PADDING = 0;
 inline constexpr int FPS = 60;
 inline constexpr int BOMB_COUNT = CELL_HEIGHT * CELL_WIDTH / 6;
 
 inline constexpr Point SCREEN_POS {
     (WIDTH - (CELL_WIDTH * CELL_SIZE)) / 2,
-    (HEIGHT - (CELL_HEIGHT * CELL_SIZE)) / 2
+    HEIGHT - CELL_SIZE * CELL_HEIGHT - (WIDTH - (CELL_WIDTH * CELL_SIZE)) / 2
 };
 
 constexpr Point DIRS[] = {{-1, -1}, {1, 1}, {0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, -1}, {-1, 1}};

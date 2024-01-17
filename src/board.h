@@ -27,13 +27,15 @@ struct Board {
     const Cell& GetCellConst(Point pos) const;
 
     void ZeroSpread(Point pos);
-    void OpenCell(Point pos);
+    int OpenCell(Point pos);
     void SetBombs(Point start);
     void ToggleFlag(Point pos);
-    
-    int unlockCount;
+    int FlagBasedAutoOpen(Point pos);
+
+    bool gameStarted;
 private:
-    int BombsAround(Point pos);
+    int BombsAround(Point pos) const;
+    int FlagsAround(Point pos) const;
 
     std::vector<Cell> cells;
     

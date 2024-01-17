@@ -16,6 +16,7 @@ struct Game {
     void GameOver();
 
     bool gameOver;
+    unsigned frameCounter;
 private:
     void Draw();
     void Update();

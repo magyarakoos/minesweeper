@@ -31,7 +31,7 @@ void Board::Construct() {
     cells.resize(0);
     cells.resize(CELL_WIDTH * CELL_HEIGHT);
 
-    unlockCount = 0;
+    gameStarted = 0;
 
     textures = {
         LoadTexture(STATE_0.c_str()),
@@ -121,7 +121,7 @@ void Board::SetBombs(Point start) {
     }
 }
 
-int Board::BombsAround(Point pos) {
+int Board::BombsAround(Point pos) const {
     
     const Board::Cell& currCell = GetCellConst(pos);
 
@@ -139,6 +139,26 @@ int Board::BombsAround(Point pos) {
             p.x >= 0 && p.y >= 0 && 
             p.x < CELL_WIDTH && p.y < CELL_HEIGHT &&
             GetCellConst(p).isBomb
+        );
+    }
+
+    return result;
+}
+
+int Board::FlagsAround(Point pos) const {
+
+    const Board::Cell& currCell = GetCellConst(pos);
+
+    int result = 0;
+
+    for (Point dir : DIRS) {
+        
+        Point p = pos + dir;
+
+        result += (
+            p.x >= 0 && p.y >= 0 && 
+            p.x < CELL_WIDTH && p.y < CELL_HEIGHT &&
+            GetCellConst(p).state == 11
         );
     }
 
@@ -202,23 +222,77 @@ void Board::ToggleFlag(Point pos) {
     );
 }
 
-void Board::OpenCell(Point pos) {
+int Board::FlagBasedAutoOpen(Point pos) {
+
+    Board::Cell& currCell = GetCell(pos);
+
+    if (currCell.state < 1 || currCell.state > 8) {
+        return 0;
+    }
+
+    int flags = FlagsAround(pos);
+    std::cerr << "FLAGS " << flags << '\n';
+
+    if (flags != currCell.state) {
+        return 0;
+    }
+
+    for (Point dir : DIRS) {
+        Point newPos = pos + dir;
+
+        if (newPos.x >= 0 && newPos.y >= 0 && 
+            newPos.x < CELL_WIDTH && newPos.y < CELL_HEIGHT
+            ) {
+        
+            Board::Cell& neighCell = GetCell(newPos);
+
+            if (neighCell.state == 11) {
+                continue;
+            }
+
+            if (neighCell.isBomb) {
+                return 1;
+            }
+
+            int bombs = BombsAround(newPos);
+
+            neighCell.state = bombs;
+
+            if (bombs != 0) {
+                continue;
+            }
+
+            ZeroSpread(newPos);
+        }
+    }
+
+    return 0;
+}
+
+int Board::OpenCell(Point pos) {
 
     Board::Cell& currCell = GetCell(pos);
 
     if (currCell.state != 0) {
-        return;
+        std::cerr << "FLAGOPEN CALL " << currCell.state << ' ' << pos.x << ' ' << pos.y << '\n';
+        return FlagBasedAutoOpen(pos);
     }
         
     int bombs = BombsAround(pos);
 
     currCell.state = bombs;
 
+    if (currCell.isBomb) {
+        return 1;
+    }
+
     if (bombs != 0) {
-        return;
+        return 0;
     }
 
     ZeroSpread(pos);
+
+    return 0;
 }
 
 void Board::Draw() const {

@@ -1,9 +1,12 @@
 #include <raylib.h>
 #include <string>
+#include <time.h>
 #include "game.h"
 #include "settings.h"
 
 int main() {
+
+    srand((unsigned)time(nullptr));
 
     assert(!GetWindowHandle());
 

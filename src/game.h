@@ -13,10 +13,13 @@ struct Game {
 
     bool TriggerClose() const;
     void Tick();
+    void GameOver();
 
+    bool gameOver;
 private:
     void Draw();
     void Update();
+    void Reload();
 
     Board board;
 };

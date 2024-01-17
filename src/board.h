@@ -7,6 +7,7 @@
 #include "point.h"
 
 struct Board {
+    void Construct();
     Board();
 
     void SetCell(Point pos, Color c);
@@ -23,18 +24,22 @@ struct Board {
     };
 
     Cell& GetCell(Point pos);
+    const Cell& GetCellConst(Point pos) const;
 
+    void ZeroSpread(Point pos);
     void OpenCell(Point pos);
     void SetBombs(Point start);
-    int BombsArount(Point pos);
+    void ToggleFlag(Point pos);
     
     int unlockCount;
 private:
+    int BombsAround(Point pos);
 
     std::vector<Cell> cells;
     
 
-    std::array<Texture2D, 11> textures;
+    std::array<Texture2D, 12> textures;
 
     Color GetColor(Point pos) const;
+    int AsIndex(Point pos) const;
 };

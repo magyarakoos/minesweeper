@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <math.h>
+#include <queue>
 #include "random_between.h"
 #include "point.h"
 #include "board.h"
@@ -20,9 +21,14 @@ void Board::Cell::SetColor(Color c) {
 }
 
 Board::Board() {
+    Construct();
+}
+
+void Board::Construct() {
     assert(CELL_WIDTH > 0 && CELL_HEIGHT > 0);
     assert(CELL_SIZE > 0);
 
+    cells.resize(0);
     cells.resize(CELL_WIDTH * CELL_HEIGHT);
 
     unlockCount = 0;
@@ -38,38 +44,37 @@ Board::Board() {
         LoadTexture(STATE_7.c_str()),
         LoadTexture(STATE_8.c_str()),
         LoadTexture(STATE_9.c_str()),
-        LoadTexture(STATE_10.c_str())
+        LoadTexture(STATE_10.c_str()),
+        LoadTexture(STATE_11.c_str())
     };
+}
+
+int Board::AsIndex(Point pos) const {
+
+    assert(pos.x >= 0 && pos.y >= 0);
+    assert(pos.x < CELL_WIDTH && pos.y < CELL_HEIGHT);
+
+    return CELL_WIDTH * pos.y + pos.x;
 }
 
 Board::Cell& Board::GetCell(Point pos) {
 
-    assert(pos.x >= 0 && pos.y >= 0);
-    assert(pos.x < CELL_WIDTH && pos.y < CELL_HEIGHT);
+    return cells[AsIndex(pos)];
+}
 
-    int index = CELL_WIDTH * pos.y + pos.x;
+const Board::Cell& Board::GetCellConst(Point pos) const {
 
-    return cells[index];
+    return cells[AsIndex(pos)];
 }
 
 void Board::SetCell(Point pos, Color c) {
 
-    assert(pos.x >= 0 && pos.y >= 0);
-    assert(pos.x < CELL_WIDTH && pos.y < CELL_HEIGHT);
-
-    int index = CELL_WIDTH * pos.y + pos.x;
-
-    cells[index].SetColor(c);
+    cells[AsIndex(pos)].SetColor(c);
 }
 
 Color Board::GetColor(Point pos) const {
 
-    assert(pos.x >= 0 && pos.y >= 0);
-    assert(pos.x < CELL_WIDTH && pos.y < CELL_HEIGHT);
-
-    int index = CELL_WIDTH * pos.y + pos.x;
-
-    return cells[index].color;
+    return cells[AsIndex(pos)].color;
 }
 
 void Board::DrawCell(Point pos) const {
@@ -79,20 +84,16 @@ void Board::DrawCell(Point pos) const {
     cellPos *= CELL_SIZE;
     cellPos += SCREEN_POS;
 
-    assert(pos.x >= 0 && pos.y >= 0);
-    assert(pos.x < CELL_WIDTH && pos.y < CELL_HEIGHT);
+    Texture2D texture = textures[cells[AsIndex(pos)].state];
 
-    int index = CELL_WIDTH * pos.y + pos.x;
-
-    DrawSprite(textures[cells[index].state], cellPos, 1);
+    DrawSprite(texture, cellPos, (float)CELL_SIZE / 32);
 }
 
 void Board::SetBombs(Point start) {
 
-    int bombCount = std::max(CELL_WIDTH, CELL_HEIGHT);
     std::vector<Point> bombPos;
 
-    while (bombPos.size() != bombCount) {
+    while (bombPos.size() != BOMB_COUNT) {
             
         Point p {
             random_between(0, CELL_WIDTH - 1),
@@ -107,6 +108,12 @@ void Board::SetBombs(Point start) {
         }
     }
 
+    std::cerr << "SETBOMBS " << bombPos.size() << '\n';
+    for (Point p : bombPos) {
+        std::cerr << p.x << ' ' << p.y << '\n';
+    }
+    std::cerr << '\n';
+
     for (Point p : bombPos) {
         Board::Cell& currCell = GetCell(p);
 
@@ -114,10 +121,12 @@ void Board::SetBombs(Point start) {
     }
 }
 
-int Board::BombsArount(Point pos) {
+int Board::BombsAround(Point pos) {
     
-    if (GetCell(pos).isBomb) {
-        return -1;
+    const Board::Cell& currCell = GetCellConst(pos);
+
+    if (currCell.isBomb) {
+        return 9;
     }
 
     int result = 0;
@@ -129,36 +138,87 @@ int Board::BombsArount(Point pos) {
         result += (
             p.x >= 0 && p.y >= 0 && 
             p.x < CELL_WIDTH && p.y < CELL_HEIGHT &&
-            GetCell(p).isBomb
+            GetCellConst(p).isBomb
         );
     }
 
     return result;
 }
 
-void Board::OpenCell(Point pos) {
-    Board::Cell& currCell = GetCell(pos);
+void Board::ZeroSpread(Point pos) {
+    
+    std::vector<bool> vis(CELL_WIDTH * CELL_HEIGHT);
 
-    if (currCell.state != 0) return;
+    std::queue<Point> todo;
 
-    int bombs = BombsArount(pos);
+    todo.push(pos);
+    vis[AsIndex(pos)] = 1;
 
-    currCell.state = (
-        bombs == -1 ? 9 : 
-        bombs ==  0 ? 10 :
-        bombs
-    );
+    while (!todo.empty()) {
+        Point p = todo.front(); 
+        todo.pop();
 
-    if (currCell.state != 10) return;
-
-    for (Point dir : DIRS) {
-        Point newPos = pos + dir;
-
-        if (newPos.x >= 0 && newPos.y >= 0 && newPos.x < CELL_WIDTH && newPos.y < CELL_HEIGHT) {
+        Board::Cell& currCell = GetCell(p);
         
-            OpenCell(pos + dir);
+        int bombs = BombsAround(p);
+
+        currCell.state = (bombs == 0 ? 10 : bombs);
+
+        if (bombs == 0) {
+            std::cerr << "EMPTYCALL " << p.x << ' ' << p.y << '\n';
+            currCell.state = 10;
+
+            for (Point dir : DIRS) {
+                Point newPos = p + dir;
+
+
+                if (newPos.x >= 0 && newPos.y >= 0 && 
+                    newPos.x < CELL_WIDTH && newPos.y < CELL_HEIGHT && 
+                    !vis[AsIndex(newPos)]
+                    ) {
+                
+                    vis[AsIndex(newPos)] = 1;
+                    todo.push(newPos);
+
+                    std::cerr << "PUSHCALL " << newPos.x << ' ' << newPos.y << '\n';
+                }
+            }
+        }
+        else {
+            std::cerr << "STATECALL " << p.x << ' ' << p.y << ' ' << bombs << '\n';
+            currCell.state = bombs;
         }
     }
+}
+
+void Board::ToggleFlag(Point pos) {
+
+    Board::Cell& currCell = GetCell(pos);
+
+    currCell.state = (
+        currCell.state ==  0 ? 11 :
+        currCell.state == 11 ?  0 :
+        currCell.state
+    );
+}
+
+void Board::OpenCell(Point pos) {
+
+    Board::Cell& currCell = GetCell(pos);
+
+    if (currCell.state != 0) {
+        return;
+    }
+        
+    int bombs = BombsAround(pos);
+
+    currCell.state = bombs;
+
+    if (bombs != 0) {
+        return;
+    }
+
+    ZeroSpread(pos);
 }
 
 void Board::Draw() const {

@@ -7,23 +7,7 @@
 #include "game.h"
 #include "board.h"
 
-Game::Game() {
-    for (int i = 0; i < CELL_HEIGHT; i++) {
-        for (int j = 0; j < CELL_WIDTH; j++) {
-
-            unsigned char randomGray = random_between(0, 255);
-
-            Color randomColor {
-                randomGray,
-                randomGray,
-                randomGray,
-                255
-            };
-
-            board.SetCell({j, i}, randomColor);
-        }
-    }
-}
+Game::Game() : gameOver(0) {}
 
 Game::~Game() {
     assert(GetWindowHandle());
@@ -43,6 +27,27 @@ void Game::Tick() {
     EndDrawing();
 }
 
+void Game::GameOver() {
+    gameOver = 1;
+
+    for (int i = 0; i < CELL_HEIGHT; i++) {
+        for (int j = 0; j < CELL_WIDTH; j++) {
+
+            Board::Cell& currCell = board.GetCell({j, i});
+
+            if (currCell.isBomb) {
+                currCell.state = 9;
+            }
+        }
+    }
+}
+
+void Game::Reload() {
+    gameOver = 0;
+
+    board.Construct();
+}
+
 void Game::Draw() {
     ClearBackground(RAYWHITE);
 
@@ -50,25 +55,58 @@ void Game::Draw() {
 }
 
 void Game::Update() {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (IsKeyPressed(KEY_F5)) {
+        
+        Reload();
+        return;
+    }
+
+    if (gameOver) {
+        return;
+    }
+
+    bool left  = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    bool right = IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
+
+    if (left != right) {
+
+        Point bottomRight;
+        bottomRight += WIDTH;
+        bottomRight -= SCREEN_POS;
+
+        if (GetMouseX() <  SCREEN_POS.x  || GetMouseY() <  SCREEN_POS.y ||
+            GetMouseX() >= bottomRight.x || GetMouseY() >= bottomRight.y
+        ) {
+            return;
+        }
 
         Point cellPos {
             (GetMouseX() - SCREEN_POS.x) / CELL_SIZE,
             (GetMouseY() - SCREEN_POS.y) / CELL_SIZE 
         };
 
-        if (board.unlockCount == 0) {
+        if (left) {
 
-            board.SetBombs(cellPos);
+            if (board.unlockCount == 0) {
+
+                board.unlockCount = 1;
+                board.SetBombs(cellPos);
+                board.ZeroSpread(cellPos);
+
+                return;
+            }
+
+            board.OpenCell(cellPos);
+
+            const Board::Cell& currCell = board.GetCellConst(cellPos);
+
+            if (currCell.isBomb) {
+                GameOver();
+            }
         }
 
-        Board::Cell& currCell = board.GetCell(cellPos);
-
-        if (currCell.isBomb) {
-            currCell.state = 9;
-            return;
+        if (right) {
+            board.ToggleFlag(cellPos);
         }
-
-        board.OpenCell(cellPos);
     }
 }

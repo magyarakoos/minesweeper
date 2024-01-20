@@ -137,7 +137,7 @@ void Game::Draw() {
 }
 
 void Game::Update() {
-    if (IsKeyPressed(KEY_F5)) {
+    if (IsKeyPressed(RELOAD)) {
         
         Reload();
         return;

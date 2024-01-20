@@ -20,6 +20,8 @@ inline constexpr Point DIRS[] = {{-1, -1}, {1, 1}, {0, 1}, {0, -1}, {1, 0}, {-1,
 
 inline const std::string TITLE = "Minesweeper";
 
+inline constexpr KeyboardKey RELOAD = KEY_F5;
+
 inline const std::string STATE_0  = "assets/cell/state0.png";
 inline const std::string STATE_1  = "assets/cell/state1.png";
 inline const std::string STATE_2  = "assets/cell/state2.png";

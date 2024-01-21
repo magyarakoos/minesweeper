@@ -1,8 +1,9 @@
 #include <string>
+#include <raylib.h>
 #include "point.h"
 
 inline constexpr int WIDTH = 800;
-inline constexpr int HEIGHT = 768;
+inline constexpr int HEIGHT = 800;
 inline constexpr int CELL_SIZE = 64;
 inline constexpr int CELL_HEIGHT = 10;
 inline constexpr int CELL_WIDTH = 12;
@@ -20,7 +21,7 @@ inline constexpr Point DIRS[] = {{-1, -1}, {1, 1}, {0, 1}, {0, -1}, {1, 0}, {-1,
 
 inline const std::string TITLE = "Minesweeper";
 
-inline constexpr KeyboardKey RELOAD = KEY_F5;
+inline constexpr KeyboardKey RELOAD = KEY_R;
 
 inline const std::string STATE_0  = "assets/cell/state0.png";
 inline const std::string STATE_1  = "assets/cell/state1.png";

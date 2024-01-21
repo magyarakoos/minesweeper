@@ -147,8 +147,6 @@ int Board::BombsAround(Point pos) const {
 
 int Board::FlagsAround(Point pos) const {
 
-    const Board::Cell& currCell = GetCellConst(pos);
-
     int result = 0;
 
     for (Point dir : DIRS) {

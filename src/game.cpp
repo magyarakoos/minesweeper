@@ -36,7 +36,7 @@ Game::Game()
         };
     }
 
-Game::~Game() {
+Game::~Game() noexcept {
     assert(GetWindowHandle());
 
     CloseWindow();

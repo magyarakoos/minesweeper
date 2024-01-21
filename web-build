@@ -1,0 +1,28 @@
+#!/bin/bash
+
+rl_dir="/home/akos/raylib"
+
+emcc -o \
+    ./web/shell.html \
+    src/*.cpp \
+    -Wall \
+    -std=c++17 \
+    -D_DEFAULT_SOURCE \
+    -Wno-missing-braces \
+    -Wunused-result \
+    -Os \
+    -I. \
+    -I $rl_dir/src \
+    -I $rl_dir/src/external \
+    -L. \
+    -L $rl_dir/src \
+    -s USE_GLFW=3 \
+    -s ASYNCIFY \
+    -s TOTAL_MEMORY=67108864 \
+    -s FORCE_FILESYSTEM=1 \
+    --preload-file assets \
+    --shell-file shell.html \
+    $rl_dir/src/libraylib.a \
+    -DPLATFORM_WEB \
+    -s 'EXPORTED_FUNCTIONS=["_free","_malloc","_main"]' \
+    -s EXPORTED_RUNTIME_METHODS=ccall

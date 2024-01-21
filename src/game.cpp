@@ -107,7 +107,7 @@ void Game::Draw() {
 
     unsigned sec = frameCounter / FPS;
 
-    if (sec >= 1000) {
+    if (sec >= 999) {
         GameOver(0);
     }
 
